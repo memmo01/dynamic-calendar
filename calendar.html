@@ -1,0 +1,208 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CALENDAR</title>
+    
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+</head>
+
+   <link rel="stylesheet" href="./reset.css"> 
+<link rel="stylesheet" href="./style.css">
+<body>
+<div class="calendarLocation"></div>
+
+<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+
+  <script type="text/javascript">
+    let currentYear = moment().format("YYYY")
+    let currentMonth=moment().format("M");
+    console.log(currentMonth)
+    // let currentDate = 
+    var dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    var months = ["January", "Februay", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+  
+        formCalendar()
+    
+
+    function formCalendar() {
+        $(".calendarLocation").empty()
+
+        //create a box to hold the calendar in 
+
+        console.log(currentMonth)
+        const outSideBox = $("<div>")
+        outSideBox.addClass("calendarBox");
+
+        $(".calendarLocation").append(outSideBox);
+
+        monthSelection()
+
+
+        //create days of the week to append to calendar at the top
+        formDayOfWeek()
+        ///creates days in the month 
+        formDaysInMonth()
+
+
+    }
+
+
+
+    function monthSelection() {
+
+        //create arrows for choosing month..going left/right and starting with current  month showing
+
+        var monthOption = months[currentMonth - 1];
+
+
+
+        //create arrow buttons
+
+        var leftBtn = $("<button>")
+        leftBtn.addClass("leftBtn")
+        leftBtn.text("<")
+
+        var rightBtn = $("<button>");
+        rightBtn.addClass("rightBtn");
+        rightBtn.text(">")
+
+        $(".calendarLocation").prepend(currentYear)
+        $(".calendarLocation").prepend(rightBtn)
+        $(".calendarLocation").prepend(monthOption)
+        $(".calendarLocation").prepend(leftBtn)
+
+        $(".leftBtn").on("click", function(e) {
+            e.preventDefault()
+            currentMonth = (parseInt(currentMonth) - 1);
+            if (currentMonth < 1) {
+                currentMonth = 12
+                currentYear = currentYear - 1;
+            }
+
+            formCalendar()
+        })
+
+        $(".rightBtn").on("click", function(e) {
+            e.preventDefault()
+            currentMonth = (parseInt(currentMonth) + 1);
+            if (currentMonth > 12) {
+                currentMonth = 1
+                currentYear = (parseInt(currentYear) + 1);
+            }
+
+            formCalendar()
+        })
+    }
+
+
+
+
+    //this funtion creates mon-fri at top
+    function formDayOfWeek() {
+
+        console.log(currentMonth)
+
+
+        const calendarTable = $("<table>");
+        calendarTable.addClass("calendarTable")
+
+        const daysOfWkrow = $("<tr>");
+        daysOfWkrow.addClass("dayOfWkrow")
+
+        $(calendarTable).append(daysOfWkrow)
+
+
+        for (var i = 0; i < dayOfWeek.length; i++) {
+
+
+            const dayOfWkData = $("<th>");
+            dayOfWkData.addClass("daysOfWkData");
+            dayOfWkData.text(dayOfWeek[i]);
+            dayOfWkData.attr("id", [i]);
+
+            $(daysOfWkrow).append(dayOfWkData)
+
+        }
+        $(".calendarBox").append(calendarTable)
+
+
+
+    }
+
+
+
+
+    function formDaysInMonth() {
+
+        let daysInMonth = moment(currentYear + "-" + currentMonth, "YYYY,MM").daysInMonth();
+
+        var day = 1;
+
+        console.log(currentMonth + "impo")
+
+        var x = (moment("" + currentYear + "-" + currentMonth + "-1").format("d"))
+        //create 7 boxes each week. each box will have an id specifc to the day of week.
+        //if date matches day of week then append to that box
+        for (j = 0; j < 6; j++) {
+            let weekRow = $("<tr>");
+            // weekRow.addClass("weekRow")
+            $(".calendarTable").append(weekRow)
+            for (var i = 0; i < 7; i++) {
+                if (([j] == 0) && (i < x)) {
+                    let addDay = $("<th>")
+                    addDay.addClass("noDay");
+                    $(weekRow).append(addDay)
+
+                } else {
+                    if (day <= daysInMonth) {
+
+                        let addDay = $("<th>")
+                        addDay.addClass("addDay");
+                        addDay.attr("id", currentYear + "-" + currentMonth + "-" + (day))
+                        addDay.text(day).append("<br>")
+
+
+                        $(weekRow).append(addDay)
+                        day++
+                    }
+
+
+                }
+            }
+
+
+        }
+        //  THIS AREA CAN HOLD A FUNCTION THAT WILL CHECK IF ANY EVENTS ARE SCHEDULED FOR MONTH AND PLACE THEM ON THE CALENDAR
+        checkSchedule()
+
+          $(".addDay").on("click", function(e) {
+        var t = e.target.id;
+        $("#" + t + "").append("WORKING!")
+    })
+    }
+
+
+    function checkSchedule() {
+        $("#2018-4-1").append("works")
+
+        $("#2018-4-20").append("dentist")
+
+        $("#2018-4-12").append("work")
+
+        $("#2018-4-10").append("idk")
+    }
+
+
+  
+</script>
+    
+</body>
+</html>
