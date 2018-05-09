@@ -42,14 +42,31 @@
         margin-left:38.5%;
        
     }
+    .editBtn{
+        color:black;
+    }
     .editBtn:hover{
         display:"block";
+        cursor: pointer;
+        color:red;
 
+    }
+    .eventDetails{
+        clear:both;
     }
     .eventDetails:hover{
         display:"block";
         color:blue;
 
+    }
+    .addIcon{
+        width:10px;
+        float:right;
+        margin-right:10px;
+    }
+    .addIcon:hover{
+        cursor: pointer;
+        color:green;
     }
 
 

@@ -20,6 +20,8 @@
 
 <link rel="stylesheet" href="./style.css">
 
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+
 </head>
 <body>
 <div class="calendarLocation"></div>
@@ -267,9 +269,16 @@
                      let addDay = $("<th>")
                      addDay.addClass("addDay");
                      addDay.attr("id", formatDate())
-                     addDay.attr("data-toggle", 'modal')
-                     addDay.attr("data-target", "#exampleModalLong")
                      addDay.text(day).append("<br>")
+
+                     let addIcon = $("<div class='addIcon' data-toggle='modal' data-target='#exampleModalLong' data-id="+formatDate()+"><i class='far fa-plus-square'></i></div>")
+                        addIcon.addClass("addIcon");
+                     addIcon.attr("data-toggle", 'modal')
+                     addIcon.attr("data-target", "#exampleModalLong")                        
+                     addIcon.attr("data-id", formatDate())
+
+                     
+                     addDay.append(addIcon)
 
 
                      $(weekRow).append(addDay)
@@ -300,9 +309,9 @@
 
 
      //this populates a modal that allows the user to enter information they want to add to the specific day
-     $(".addDay").on("click", function(e) {
-       
-         let targetId = e.target.id;
+     $(".addIcon").on("click", function(e) {
+       e.preventDefault()
+         let targetId = $(this).data("id");
         
          console.log(targetId)
 
@@ -341,7 +350,6 @@ $("#exampleModalLong").modal('toggle');
  }
 
  $(".close").on("click",function(){
-     alert('h')
      formCalendar()
  })
 
@@ -353,6 +361,8 @@ $("#exampleModalLong").modal('toggle');
 
         submitBtn= "<button id='putInfo'>submit</button>";
 
+        
+        $(".modal-title").html("Enter Event")
         $(".modal-footer").html(submitBtn)
       
  
@@ -376,26 +386,41 @@ $("#exampleModalLong").modal('toggle');
      $.get("/api/daterange/" + start + "/" + end + "", function(results) {
          for (var i = 0; i < results.length; i++) {
 
-             var id = results[i].date;
+            var id = results[i].id;
+             var dateId = results[i].date;
              var time = results[i].time;
              var event = results[i].event;
 
+
+             //this will add an event and time of event if one exists for this specific day in the database
              var display = $("<div>");
                 display.addClass("eventDetails")
-                display.attr("id",id)
+                display.attr("id",dateId)
                 display.attr("data-time", time)
                 display.text(time + " - " + event);
 
-                var editBtn =$("<button>");
-                    editBtn.addClass("editBtn");
-                    editBtn.attr("id",id+time)
-                    editBtn.text("edit")
+
+
+                //this will add an edit button to each event being placed into the spefic day. it is given specific
+                //attributes to reference the specifc day/ event/ and time so we know which event needs to be edited
+                //and can populate the information already existing into an edit form to change
+                var editBtn =$("<div>");
+                    editBtn.addClass("fas fa-pencil-alt editBtn");
+                    editBtn.attr("id",dateId+time)
+                    editBtn.attr("data-time", time)
+                    editBtn.attr("data-dateId", dateId)
+                    editBtn.attr("data-id",id)
+                    editBtn.attr("data-toggle", 'modal')
+                     editBtn.attr("data-target", "#exampleModalLong") 
                     editBtn.css("display","none")
 
                     $(display).append(editBtn);
 
-             $("#" + id + "").append(display)
+             $("#" + dateId + "").append(display)
          }
+
+
+         //when hovering over a specific event it will display the edit button to select
              $(".eventDetails").hover(function(e){
 
                 var x=e.target.id
@@ -403,22 +428,114 @@ $("#exampleModalLong").modal('toggle');
                 var w = x+y
 
                 $("#"+w+"").css("display","block")
-    },function(e){
-         var x=e.target.id
-         var y = $(this).data("time");
-                var w = x+y
-        $("#"+w+"").css("display","none")
+                },function(e){
+                    var x=e.target.id
+                    var y = $(this).data("time");
+                      var w = x+y
+       
+                $("#"+w+"").css("display","none")
     })
 
-    $(".editBtn").on("click",function(){
-        alert("helloe")
+
+
+//when the edit button is selected it will gather information saved as attributes to query the database and gather the
+//specific event occuring on that day at that time
+
+    $(".editBtn").on("click",function(e){
+           e.preventDefault()
+          let editTime = ($(this).data("time"))
+          let databaseId = ($(this).data("id"))
+
+        
+$.get("/api/getSingleEvent/"+databaseId,function(results){
+   
+    var Events = results[0].event
+     populateEditToModal(editTime,Events,databaseId)
+})
+        
+    
     })
-            // $(".eventDetails").on("click",function(e){
-            // //  var x = $(this).data("time");
-            // //     alert(x+e.target.id)
-            // console.log($(this).data("time"))
-            //     })
      })
+        
+
+ }
+    
+
+
+//the information is passed into this funtion to populate to the modal for reviewing and editing
+ function populateEditToModal(editTime,event,databaseId){
+
+     $(".modal-title").html("Edit Date");
+
+     var form = "<div class='form-group'><label for='exampleFormControlSelect1'>Time</label><select class='form-control' id='selectedTime'><option selected>"+editTime+"</option></select>";
+        form +="</div><div class='form-group'><label for='exampleFormControlTextarea1'>Event:</label>";
+            form+="<textarea class='form-control' id='event' rows='3'>"+event+"</textarea></div>";
+
+            var submitEdit =$("<button>");
+                submitEdit.addClass("submitEdit")
+                submitEdit.text("submit edit")
+
+
+            var deleteEvent= $("<button>");
+                deleteEvent.addClass("deleteEvent")
+                deleteEvent.text("delete event")
+
+                $(".modal-footer").html(submitEdit)
+                $(".modal-footer").append(deleteEvent)
+
+            $(".modal-body").html(form);
+
+         for(j=0;j<time.length;j++){
+            var timeSelection = "<option value="+time[j]+">"+time[j]+"</option>";
+                $("#selectedTime").append(timeSelection)
+        }
+
+
+        //on submit the updated information is passed into the database and is identified based on the database id
+
+        $(".submitEdit").on("click",function(e){
+            e.preventDefault()
+            var info={
+                id:databaseId,
+                time:$("#selectedTime").val(),
+                event:$("#event").val()
+            }
+
+            $.ajax({
+                url:"/api/editEvent",
+                method:"PUT",
+                data:info
+            }).then(function(){
+                console.log("added")
+                 formCalendar()
+            })
+           $("#exampleModalLong").modal('toggle');
+            
+        })
+
+
+
+        //when delete is selected the database is queried for a specific id. when it finds that id it will delete all information
+        //under that id
+        $(".deleteEvent").on("click",function(e){
+            e.preventDefault()
+            var info ={
+                id:databaseId
+            }
+            $.ajax({
+                url:"/api/deleteEvent",
+                method:"DELETE",
+                data:info
+            }).then(function(){
+                console.log("deleted")
+                 formCalendar()
+            })
+            $("#exampleModalLong").modal('toggle');
+        })
+
+
+
+        
 
  }
    
