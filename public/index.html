@@ -39,8 +39,7 @@
         ...
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="save">Save changes</button>
+        <button type="button" class="btn btn-primary"  id="addEvntBtn">Add Event</button>
       </div>
     </div>
   </div>
@@ -57,6 +56,7 @@
 
  var dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
  var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+ var time = ["6am", "615am", "630am", "645am", "7am", "715am", "730am", "745am", "8am", "815am", "830am", "845am", "9am", "915am", "930am", "945am", "10am", "1015am", "1030am", "1045am", "11am", "1115am", "1130am", "1145am", "12pm", "1215pm", "1230pm", "1245pm", "1pm", "115pm", "130pm", "145pm", "2pm", "215pm", "230pm", "245pm", "3pm", "315pm", "330pm", "345pm", "4pm", "415pm", "430pm", "445pm", "5pm", "515pm", "530pm", "545pm", "6pm", "615pm", "630pm", "645pm", "7pm", "715pm", "730pm", "745pm", "8pm", "815pm", "830pm", "845pm", "9pm"]
 
  formCalendar()
 
@@ -225,7 +225,7 @@
  function formDaysInMonth() {
      // here we find out whhich year and month the user is looking at. Based on that data, we use momentjs to
      // determine how many days are in a month
-
+    
      daysInMonth = moment(currentYear + "-" + currentMonth, "YYYY,MM").daysInMonth();
 
      var day = 01;
@@ -301,7 +301,10 @@
 
      //this populates a modal that allows the user to enter information they want to add to the specific day
      $(".addDay").on("click", function(e) {
-         var targetId = e.target.id;
+       
+         let targetId = e.target.id;
+        
+         console.log(targetId)
 
          addEvent(targetId)
      })
@@ -312,32 +315,53 @@
  function addEvent(targetId) {
      addNewEventForm()
 
-     $("#addEvntBtn").on("click", function() {
+     $("#putInfo").on("click", function(e) {
+         e.preventDefault()
 
          var eventPackage = {
              date: targetId,
-             time: $("#time").val(),
+             time: $("#selectedTime").val(),
              event: $("#event").val()
          }
 
 
          // send packaged information to the database
-         $.post("/api/addevent", eventPackage, function() {})
+         $.post("/api/addevent", eventPackage, function() {
+             formCalendar()
+         })
 
-
+$("#exampleModalLong").modal('toggle');
          //after information has been sent to the database then refresh the page so the data can be obtained from database
          //and entered into the calendar
-         formCalendar()
+         
      })
 
 
 
  }
 
+ $(".close").on("click",function(){
+     alert('h')
+     formCalendar()
+ })
+
  // this function populates information into a modal for the user to input information
  function addNewEventForm() {
-     var form = "<input id='time'> <input id='event'> <button id='addEvntBtn'>add</button>";
-     $(".modal-body").html(form)
+     var form = "<div class='form-group'><label for='exampleFormControlSelect1'>Time</label><select class='form-control' id='selectedTime'></select>";
+        form +="</div><div class='form-group'><label for='exampleFormControlTextarea1'>Event:</label>";
+        form+="<textarea class='form-control' id='event' rows='3'></textarea></div>";
+
+        submitBtn= "<button id='putInfo'>submit</button>";
+
+        $(".modal-footer").html(submitBtn)
+      
+ 
+        $(".modal-body").html(form)
+        for(j=0;j<time.length;j++){
+            var timeSelection = "<option value="+time[j]+">"+time[j]+"</option>";
+                $("#selectedTime").append(timeSelection)
+        }
+    
  }
  // -----------------------------------------------------------------------------------------------
 
@@ -356,13 +380,51 @@
              var time = results[i].time;
              var event = results[i].event;
 
-             var display = "<br>" + time + " - " + event;
+             var display = $("<div>");
+                display.addClass("eventDetails")
+                display.attr("id",id)
+                display.attr("data-time", time)
+                display.text(time + " - " + event);
+
+                var editBtn =$("<button>");
+                    editBtn.addClass("editBtn");
+                    editBtn.attr("id",id+time)
+                    editBtn.text("edit")
+                    editBtn.css("display","none")
+
+                    $(display).append(editBtn);
 
              $("#" + id + "").append(display)
          }
+             $(".eventDetails").hover(function(e){
+
+                var x=e.target.id
+                var y = $(this).data("time");
+                var w = x+y
+
+                $("#"+w+"").css("display","block")
+    },function(e){
+         var x=e.target.id
+         var y = $(this).data("time");
+                var w = x+y
+        $("#"+w+"").css("display","none")
+    })
+
+    $(".editBtn").on("click",function(){
+        alert("helloe")
+    })
+            // $(".eventDetails").on("click",function(e){
+            // //  var x = $(this).data("time");
+            // //     alert(x+e.target.id)
+            // console.log($(this).data("time"))
+            //     })
      })
 
  }
+   
+
+
+
 
 
 
