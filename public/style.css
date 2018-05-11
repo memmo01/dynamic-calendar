@@ -1,77 +1,94 @@
 /* //conatiner for the calendar to be held in */
-    .calendarBox{
-        width:100%;
-        border:1px solid black;
-    }
-    table{
-        width:100%;
-    }
-    /* EVENLY SPACES OUT THE DAYS OF THE WEEK BOXES */
-   .daysOfWkData{
-         border-bottom:1px solid black; 
-        width:14%;
-    }
-    /* EVENLY SPACES THE DATES IN THE MONTH BOXES AND DISPLAY NUMERICAL DAY OF MONTH IN TOP LEFT CORNER */
-    .addDay{
-        width:14%;
-        height:200px;
+ .calendarBox{
+     width:100%;
+     border:3px solid #005387;
+}
+ table{
+     width:100%;
+     
+}
+/* EVENLY SPACES OUT THE DAYS OF THE WEEK BOXES */
+ .daysOfWkData{
+     border-bottom:4px solid #005387;
+     width:14%;
+     text-align: center;
+     background-color:#f2f6fa;
+}
+/* EVENLY SPACES THE DATES IN THE MONTH BOXES AND DISPLAY NUMERICAL DAY OF MONTH IN TOP LEFT CORNER */
+ .addDay{
+     width:14%;
+     height:200px;
      vertical-align: baseline;
      text-align: left;
      padding-left:5px;
-     border:1px solid black;
+     border-top:4px solid #005387;
+     border-bottom:4px solid #005387;
+     border-left:1px solid #005387;
+     border-right:1px solid #005387;
      overflow:auto;
+}
+ .monthContainer{
+     width:15%;
+     height:100px;
+     display:inline-flex;
+     margin-left:46%;
+     text-align: center;
+     padding-bottom:10px;
+}
+ .monthOption{
+     width:100%;
+     line-height:100px;
+     font-size: 30px;
+}
+    .monthBTN{
+        margin-top:40px;
     }
-    .monthContainer{
-        width:30%;
-        height:100px;
-        display:inline-flex;
-         margin-left:38.5%; 
-        text-align: center;
-        padding-bottom:10px;
+    .monthBTN:hover{
+        cursor: pointer;
     }
-    .monthOption{
+    .yearBTN{
+        margin:0 5px 0 5px;
+    }
+    .yearBTN:hover{
+        cursor: pointer;
+    }
+ .yearOption{
+     width:30%;
+     font-size: 25px;
+     padding:10px 0 10px 0;
+     text-align: center;
+     margin-left:38.5%;
+}
+    .containing{
         width:100%;
-        line-height:100px;
-        font-size: 30px;
+        background-color:#f2f7fa;
     }
-    .yearOption{
-        width:30%;
-        font-size: 25px;
-        padding:10px 0 10px 0;
-        text-align: center;
-        margin-left:38.5%;
-       
-    }
-    .editBtn{
-        color:black;
-    }
-    .editBtn:hover{
-        display:"block";
-        cursor: pointer;
-        color:red;
-
-    }
-    .eventDetails{
-        clear:both;
-    }
-    .eventDetails:hover{
-        display:"block";
-        color:blue;
-
-    }
-    .addIcon{
-        width:10px;
-        float:right;
-        margin-right:10px;
-    }
-    .addIcon:hover{
-        cursor: pointer;
-        color:green;
-    }
-
-
+ .editBtn{
+     color:black;
+}
+ .editBtn:hover{
+     display:"block";
+     cursor: pointer;
+     color:red;
+}
+ .eventDetails{
+     clear:both;
+}
+ .eventDetails:hover{
+     display:"block";
+     color:blue;
+}
+ .addIcon{
+     width:10px;
+     float:right;
+     margin-right:10px;
+}
+ .addIcon:hover{
+     cursor: pointer;
+     color:green;
+}
 /* //width of the time options when adding an event */
-    #selectedTime{
-        width:25%;
-    }
-    
+ #selectedTime{
+     width:25%;
+}
+ 

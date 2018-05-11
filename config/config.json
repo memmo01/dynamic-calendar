@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "root",
-    "password": "PBJtime",
-    "database": "calendar_db",
+    "password": "",
+    "database": "",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
